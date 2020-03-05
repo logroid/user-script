@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200305.2317
+// @version      20200305.2324
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -49,7 +49,7 @@
       var aid = RegExp.$1;
       if (violation[aid] != undefined) {
         GM_addStyle(
-          '#ProductTitle{ color: white !important; background: red; }'
+          '#ProductTitle:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
         );
       }
     }
