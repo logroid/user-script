@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200306.0009
+// @version      20200306.0012
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -54,7 +54,7 @@
         );
       }
     }
-  } else if (/\/search\/search/.test(pathname)) {
+  } else if (/^\/search\/search/.test(pathname)) {
     var aids = Object.keys(violation);
     GM_addStyle(
       aids
