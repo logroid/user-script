@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200305.2227
+// @version      20200305.2317
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -17,7 +17,6 @@
 
 (function() {
   'use strict';
-  console.info(window.location);
   var pathname = window.location.pathname;
   var limit = 86400000 * 8;
   var key = 'violation';
@@ -39,7 +38,6 @@
     GM_setValue(key, JSON.stringify(violation));
   }
   load();
-  console.info(violation);
   if (window.location.host == 'page.auctions.yahoo.co.jp') {
     var $vr = $('a:contains("違反商品の申告")').clone(true);
     $vr.addClass('violation-report');
@@ -47,6 +45,14 @@
     GM_addStyle(
       '.violation-report{ display: block; text-align: center; border-radius: 10px; border: 1px solid red; padding: 10px; color: white !important; background: red; }'
     );
+    if (window.location.href.match(/\/auction\/(\w+)$/)) {
+      var aid = RegExp.$1;
+      if (violation[aid] != undefined) {
+        GM_addStyle(
+          '#ProductTitle{ color: white !important; background: red; }'
+        );
+      }
+    }
   } else {
     switch (pathname) {
       case '/search/search':
@@ -73,7 +79,6 @@
         ).attr('href');
         if (href.match(/\/auction\/(\w+)$/)) {
           var aid = RegExp.$1;
-          console.info(aid);
           violation[aid] = new Date().getTime();
           save();
         }
