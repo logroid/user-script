@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200305.2343
+// @version      20200305.2346
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
