@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200305.2324
+// @version      20200305.2334
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -84,6 +84,9 @@
         }
         break;
       case '/jp/show/violation_report':
+        $('html,body').animate({
+          scrollTop: $('form[action$="/config/violation_report"]').offset().top
+        });
         $('input[name="violation_code"][value="other"]').prop('checked', true);
         $('select[name="other_violation_code"]').val('1003');
         break;
