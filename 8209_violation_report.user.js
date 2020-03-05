@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200306.0012
+// @version      20200306.0052
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -88,7 +88,12 @@
           scrollTop: $('form[action$="/config/violation_report"]').offset().top
         });
         $('input[name="violation_code"][value="other"]').prop('checked', true);
-        $('select[name="other_violation_code"]').val('1003');
+        var $sel = $('select[name="other_violation_code"]');
+        if ($sel.find('option[value="1003"]').length > 0) {
+          $sel.val('1003');
+        } else if ($sel.find('option[value="2013"]').length > 0) {
+          $sel.val('2013');
+        }
         GM_addStyle(
           'input[type="submit"][value="送信"] {padding: 10px 30px;margin: 0 30px;}'
         );
