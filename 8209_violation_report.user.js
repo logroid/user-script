@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200305.2351
+// @version      20200306.0009
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -18,6 +18,7 @@
 (function() {
   'use strict';
   var pathname = window.location.pathname;
+  console.info(pathname);
   var limit = 86400000 * 8;
   var key = 'violation';
   var violation = {};
@@ -53,26 +54,25 @@
         );
       }
     }
+  } else if (/\/search\/search/.test(pathname)) {
+    var aids = Object.keys(violation);
+    GM_addStyle(
+      aids
+        .map(id => {
+          return 'a[href$="/jp/auction/' + id + '"]';
+        })
+        .join(',') + '{ font-weight:bold; color:red !important; }'
+    );
+    GM_addStyle(
+      aids
+        .map(id => {
+          return 'a[href$="/jp/auction/' + id + '"]:before';
+        })
+        .join(',') +
+        '{ content: "🚨"; display: inline-block; font-size: 30px; }'
+    );
   } else {
     switch (pathname) {
-      case '/search/search':
-        var aids = Object.keys(violation);
-        GM_addStyle(
-          aids
-            .map(id => {
-              return 'a[href$="/jp/auction/' + id + '"]';
-            })
-            .join(',') + '{ font-weight:bold; color:red !important; }'
-        );
-        GM_addStyle(
-          aids
-            .map(id => {
-              return 'a[href$="/jp/auction/' + id + '"]:before';
-            })
-            .join(',') +
-            '{ content: "🚨"; display: inline-block; font-size: 30px; }'
-        );
-        break;
       case '/jp/config/violation_report':
         var href = $(
           'a:contains("商品ページに戻る"), a:contains("商品詳細ページに戻る")'
