@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200306.1040
+// @version      20200306.1706
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -10,9 +10,10 @@
 // @grant        GM_getValue
 // @grant        GM_addStyle
 // @require      https://code.jquery.com/jquery-3.4.1.min.js
-// @run-at       document-end
+// @run-at       document-body
 // @updateURL    https://logroid.github.io/user-script/8209_violation_report.user.js
 // @downloadURL  https://logroid.github.io/user-script/8209_violation_report.user.js
+// @homepage     https://logroid.blogspot.com/2020/03/8209violationreport.html
 // ==/UserScript==
 
 (function() {
