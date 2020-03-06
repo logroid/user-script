@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200306.0052
+// @version      20200306.1040
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -37,24 +37,10 @@
   }
   function save() {
     GM_setValue(key, JSON.stringify(violation));
+    addReportedCss();
   }
   load();
-  if (window.location.host == 'page.auctions.yahoo.co.jp') {
-    var $vr = $('a:contains("違反商品の申告")').clone(true);
-    $vr.addClass('violation-report');
-    $('#ProductTitle').append($vr);
-    GM_addStyle(
-      '.violation-report{ display: block; text-align: center; border-radius: 10px; border: 1px solid red; padding: 10px; color: white !important; background: red; }'
-    );
-    if (window.location.href.match(/\/auction\/(\w+)$/)) {
-      var aid = RegExp.$1;
-      if (violation[aid] != undefined) {
-        GM_addStyle(
-          '#ProductTitle:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
-        );
-      }
-    }
-  } else if (/^\/search\/search/.test(pathname)) {
+  function addReportedCss() {
     var aids = Object.keys(violation);
     GM_addStyle(
       aids
@@ -71,6 +57,23 @@
         .join(',') +
         '{ content: "🚨"; display: inline-block; font-size: 30px; }'
     );
+  }
+  addReportedCss();
+  if (window.location.host == 'page.auctions.yahoo.co.jp') {
+    var $vr = $('a:contains("違反商品の申告")').clone(true);
+    $vr.addClass('violation-report');
+    $('#ProductTitle').append($vr);
+    GM_addStyle(
+      '.violation-report{ display: block; text-align: center; border-radius: 10px; border: 1px solid red; padding: 10px; color: white !important; background: red; }'
+    );
+    if (window.location.href.match(/\/auction\/(\w+)$/)) {
+      var aid = RegExp.$1;
+      if (violation[aid] != undefined) {
+        GM_addStyle(
+          '#ProductTitle:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
+        );
+      }
+    }
   } else {
     switch (pathname) {
       case '/jp/config/violation_report':
