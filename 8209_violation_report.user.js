@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200312.1949
+// @version      20200312.2017
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -78,7 +78,8 @@
     }
   } else if (/^\/seller\//.test(pathname)) {
     var count = 0;
-    $('#list01 > table > tbody> tr').each((i_, tr) => {
+    var $header = null;
+    $('#list01 > table > tbody> tr').each((i, tr) => {
       var $tr = $(tr);
       var $a = $tr.find('h3>a[href*="/jp/auction/"]');
       if ($a.length > 0) {
@@ -90,19 +91,35 @@
           )
         );
         count++;
+      } else if (i === 0) {
+        $header = $tr;
       }
     });
     if (count > 0) {
+      if ($header != null) {
+        var $allCheck = $('<label>')
+          .text('🚨一括チェック')
+          .append($('<input type="checkbox">'));
+        $allCheck.click(e => {
+          var $target = $(e.target);
+          $('td.check_box input[type="checkbox"]')
+            .prop('checked', $target.prop('checked'))
+            .change();
+        });
+        $header.append($('<th class="check_box">').append($allCheck));
+      }
       var $titlebar = $('#titlebar');
       GM_addStyle(
         '#list01 td.check_box input[type="checkbox"]{width:50px;height:50px;vertical-align: middle;}#list01 td.check_box label{white-space: nowrap;font-size: 40px;}' +
+          '#list01 th.check_box input[type="checkbox"]{width:20px;height:20px;vertical-align: middle;}#list01 th.check_box label{white-space: nowrap;font-size: 20px;}' +
+          '.check_box label{user-select: none;}' +
           '.violation_report_all{position: fixed;right: 10px;margin-top: 50px;top: ' +
           $titlebar.offset().top +
           'px}' +
           '.violation_report_all button{font-size: 30px;}' +
           'tr[violation_report="true"]{background-color: #ffbcbc;}'
       );
-      $('.check_box input[type="checkbox"]').click(e => {
+      $('.check_box input[type="checkbox"]').on('click change', e => {
         var $target = $(e.target),
           $parent = $target.closest('tr');
         $parent.attr('violation_report', $target.prop('checked'));
