@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200306.1706
+// @version      20200312.1845
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -9,6 +9,7 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_addStyle
+// @grant        GM_openInTab
 // @require      https://code.jquery.com/jquery-3.4.1.min.js
 // @run-at       document-body
 // @updateURL    https://logroid.github.io/user-script/8209_violation_report.user.js
@@ -74,6 +75,53 @@
           '#ProductTitle:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
         );
       }
+    }
+  } else if (/^\/seller\//.test(pathname)) {
+    var count = 0;
+    $('#list01 > table > tbody> tr').each((i_, tr) => {
+      var $tr = $(tr);
+      var $a = $tr.find('h3>a[href*="/jp/auction/"]');
+      if ($a.length > 0) {
+        $tr.append(
+          $('<td class="check_box">').append(
+            $('<label>')
+              .text('🚨')
+              .append($('<input type="checkbox">').val($a.attr('href')))
+          )
+        );
+        count++;
+      }
+    });
+    if (count > 0) {
+      var $titlebar = $('#titlebar');
+      GM_addStyle(
+        '#list01 td.check_box input[type="checkbox"]{width:50px;height:50px;vertical-align: middle;}#list01 td.check_box label{white-space: nowrap;font-size: 40px;}' +
+          '.violation_report_all{position: fixed;right: 10px;margin-top: 50px;top: ' +
+          $titlebar.offset().top +
+          'px}' +
+          '.violation_report_all button{font-size: 30px;}'
+      );
+      var $button = $('<button>').text('🚨一括通報');
+      $button.click(() => {
+        $('#list01 > table > tbody> tr input[type="checkbox"]:checked').each(
+          (i_, chk) => {
+            var $chk = $(chk);
+            if ($chk.val().match(/\/auction\/(\w+)$/)) {
+              var aid = RegExp.$1;
+              GM_openInTab(
+                'https://auctions.yahoo.co.jp/jp/show/violation_report?aID=' +
+                  aid,
+                { insert: true }
+              );
+            }
+          }
+        );
+      });
+      $(document.body).append(
+        $('<div>')
+          .addClass('violation_report_all')
+          .append($button)
+      );
     }
   } else {
     switch (pathname) {
