@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200312.2017
+// @version      20200312.2035
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -108,14 +108,11 @@
         });
         $header.append($('<th class="check_box">').append($allCheck));
       }
-      var $titlebar = $('#titlebar');
       GM_addStyle(
         '#list01 td.check_box input[type="checkbox"]{width:50px;height:50px;vertical-align: middle;}#list01 td.check_box label{white-space: nowrap;font-size: 40px;}' +
           '#list01 th.check_box input[type="checkbox"]{width:20px;height:20px;vertical-align: middle;}#list01 th.check_box label{white-space: nowrap;font-size: 20px;}' +
           '.check_box label{user-select: none;}' +
-          '.violation_report_all{position: fixed;right: 10px;margin-top: 50px;top: ' +
-          $titlebar.offset().top +
-          'px}' +
+          '.violation_report_all{position: fixed;right: 10px;margin-top: 70px;top: 100px;}' +
           '.violation_report_all button{font-size: 30px;}' +
           'tr[violation_report="true"]{background-color: #ffbcbc;}'
       );
