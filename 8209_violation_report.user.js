@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20200312.1845
+// @version      20200312.1949
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -99,8 +99,14 @@
           '.violation_report_all{position: fixed;right: 10px;margin-top: 50px;top: ' +
           $titlebar.offset().top +
           'px}' +
-          '.violation_report_all button{font-size: 30px;}'
+          '.violation_report_all button{font-size: 30px;}' +
+          'tr[violation_report="true"]{background-color: #ffbcbc;}'
       );
+      $('.check_box input[type="checkbox"]').click(e => {
+        var $target = $(e.target),
+          $parent = $target.closest('tr');
+        $parent.attr('violation_report', $target.prop('checked'));
+      });
       var $button = $('<button>').text('🚨一括通報');
       $button.click(() => {
         $('#list01 > table > tbody> tr input[type="checkbox"]:checked').each(
