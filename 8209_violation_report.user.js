@@ -68,7 +68,7 @@
     GM_addStyle(
       '.violation-report{ display: block; text-align: center; border-radius: 10px; border: 1px solid red; padding: 10px; color: white !important; background: red; }'
     );
-    if (window.location.href.match(/\/auction\/(\w+)$/)) {
+    if (/^\/jp\/auction\/(\w+)$/.test(pathname)) {
       var aid = RegExp.$1;
       if (violation[aid] != undefined) {
         GM_addStyle(
