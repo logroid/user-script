@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ヤフオク! 違反通報
 // @namespace    https://logroid.blogspot.com/
-// @version      20210925.0000
+// @version      20230813.2236
 // @description  ヤフオク! で違反通報をサポートするスクリプト
 // @author       logroid
 // @match        https://auctions.yahoo.co.jp/*
@@ -59,12 +59,20 @@
         .join(',') +
         '{ content: "🚨"; display: inline-block; font-size: 30px; }'
     );
+    GM_addStyle(
+      aids
+        .map(id => {
+          return '.Products__list a[href$="/jp/auction/' + id + '"]:before';
+        })
+        .join(',') +
+        '{ content: "🚨"; display: inline-block; font-size: 50px; margin-top: -70px; position: absolute; }'
+    );
   }
   addReportedCss();
   if (window.location.host == 'page.auctions.yahoo.co.jp') {
     var $vr = $('a:contains("違反商品の申告")').clone(true);
     $vr.addClass('violation-report');
-    $('#ProductTitle').append($vr);
+    $('.l-contentsHead').append($vr);
     GM_addStyle(
       '.violation-report{ display: block; text-align: center; border-radius: 10px; border: 1px solid red; padding: 10px; color: white !important; background: red; }'
     );
@@ -72,27 +80,24 @@
       var aid = RegExp.$1;
       if (violation[aid] != undefined) {
         GM_addStyle(
-          '#ProductTitle:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
+          '.l-contentsHead:before{ content: "🚨通報済み"; display: block; font-size: 30px; text-align: center; }'
         );
       }
     }
   } else if (/^\/seller\//.test(pathname)) {
     var count = 0;
-    var $header = null;
-    $('#list01 > table > tbody> tr').each((i, tr) => {
-      var $tr = $(tr);
-      var $a = $tr.find('h3>a[href*="/jp/auction/"]');
+    var $header = $('.Options__items');
+    $('ul.Products__items li').each((i, li) => {
+      var $li = $(li);
+      var $a = $li.find('.Product__title>a[href*="/jp/auction/"]');
       if ($a.length > 0) {
-        $tr.append(
-          $('<td class="check_box">').append(
-            $('<label>')
+        $li.find('.Product__priceInfo').append(
+            $('<label class="seller-checkbox">')
               .text('🚨')
-              .append($('<input type="checkbox">').val($a.attr('href')))
+              .append($('<input type="checkbox">').val($a.attr('href'))
           )
         );
         count++;
-      } else if (i === 0) {
-        $header = $tr;
       }
     });
     if (count > 0) {
@@ -102,28 +107,26 @@
           .append($('<input type="checkbox">'));
         $allCheck.click(e => {
           var $target = $(e.target);
-          $('td.check_box input[type="checkbox"]')
+          $('.seller-checkbox input[type="checkbox"]')
             .prop('checked', $target.prop('checked'))
             .change();
         });
-        $header.append($('<th class="check_box">').append($allCheck));
+        $header.append($('<li>').append($allCheck));
       }
       GM_addStyle(
-        '#list01 td.check_box input[type="checkbox"]{width:50px;height:50px;vertical-align: middle;}#list01 td.check_box label{white-space: nowrap;font-size: 40px;}' +
-          '#list01 th.check_box input[type="checkbox"]{width:20px;height:20px;vertical-align: middle;}#list01 th.check_box label{white-space: nowrap;font-size: 20px;}' +
-          '.check_box label{user-select: none;}' +
+        '.seller-checkbox input{ margin-left: 10px;  transform: scale(2); } .seller-checkbox { font-size: 20px }'+
           '.violation_report_all{position: fixed;right: 10px;margin-top: 70px;top: 100px;}' +
           '.violation_report_all button{font-size: 30px;}' +
-          'tr[violation_report="true"]{background-color: #ffbcbc;}'
+          'li.Product[violation_report="true"]{background-color: #ffbcbc;}'
       );
-      $('.check_box input[type="checkbox"]').on('click change', e => {
+      $('.seller-checkbox input[type="checkbox"]').on('click change', e => {
         var $target = $(e.target),
-          $parent = $target.closest('tr');
+          $parent = $target.closest('li.Product');
         $parent.attr('violation_report', $target.prop('checked'));
       });
       var $button = $('<button>').text('🚨一括通報');
       $button.click(() => {
-        $('#list01 > table > tbody> tr input[type="checkbox"]:checked').each(
+        $('.Products__list input[type="checkbox"]:checked').each(
           (i_, chk) => {
             var $chk = $(chk);
             if ($chk.val().match(/\/auction\/(\w+)$/)) {
